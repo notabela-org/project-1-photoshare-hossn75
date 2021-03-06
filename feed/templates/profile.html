@@ -1,0 +1,25 @@
+{% extends 'base.html' %}
+
+{% block title %}{{username}}{% endblock %}
+
+{% block body %}
+<div class='container'>
+      <div class ="container mt-5 mx-auto text-center">
+          {% if profile is None %}
+            <img class="profile-img rounded-circle mx-auto" src="photoshare/media/default.jpg"/>
+          {% else %}
+            <img class="profile-img rounded-circle mx-auto" src="{{profile.get_image}}"/>
+          {% endif %} 
+          <p>{{username}}</p>
+          <p>{% if profile is None %}
+              Edit profile to update your bio
+              {% else %}
+              profile.get_bio
+              {% endif %}
+          </p>
+      {% if request.user.is_authenticated and request.user.get_username == username%}
+         <a class="btn btn-primary" href='{% url "edit-profile" %}'>Edit profile</a>
+      {% endif %}
+      </div>
+</div>
+{% endblock %}
