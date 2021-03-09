@@ -3,11 +3,11 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
 from django.db.models import ObjectDoesNotExist
 from django.http import HttpResponseRedirect
+from django.http import Http404
 from django.urls import reverse, reverse_lazy
 from django.core.paginator import Paginator
 from users.models import *
-from .forms import EditProfileForm
-from .forms import NewPostForm 
+from .forms import *
 
 # Create your views here.
 @login_required
@@ -19,7 +19,7 @@ def index(request):
         feedItem['post'] = post
         try:
             feedItem['profile'] = Profile.objects.get(user=post.user)
-            feedItem['comments'] = Comment.objects.get(post=post)
+            feedItem['comments'] = Comment.objects.filter(post=post)
         except ObjectDoesNotExist:
             print("Failed to fetch profile or comments")
         feed.append(feedItem)
@@ -70,7 +70,7 @@ def editprofile(request):
 
 @login_required
 def new_post(request):
-    form = NewPostForm(data={})
+    form = NewPostForm()
     if request.method == 'POST':
         form = NewPostForm(data=request.POST,files= request.FILES)
         if form.is_valid():
@@ -85,4 +85,34 @@ def new_post(request):
 
 @login_required
 def post(request,id):
-    return render(request,'feed/post.html',{'id':id})
+    form = CommentForm()
+    if request.method == 'POST':
+        form = CommentForm(data=request.POST)
+        if form.is_valid():
+            cleanForm = form.cleaned_data
+            user = request.user
+            post = Post.objects.get(id=id)
+            comment = Comment(user=user,post=post,comment=cleanForm['comment'])
+            comment.save()
+
+            return HttpResponseRedirect(reverse('index'))
+        return render(request,'feed/post.html',{'id':id,'form':form})
+
+    feedItem = {}
+    try:
+        post = Post.objects.get(id=id)
+        feedItem['post'] = post
+        feedItem['profile'] = Profile.objects.get(user=post.user)
+        feedItem['comments'] = []
+        comments = list(Comment.objects.filter(post=post))
+        for item in comments:
+            commentDict = {'comment':item}
+            profile = Profile.objects.get(user=item.user)
+            commentDict['profile'] = profile
+            feedItem['comments'].append(commentDict)
+    except ObjectDoesNotExist:
+        print("Failed to fetch profile or comments")
+        feedItem['comments'] = []
+
+    return render(request,'feed/post.html',{'id':id,'form':form,'feed_item':feedItem})
+

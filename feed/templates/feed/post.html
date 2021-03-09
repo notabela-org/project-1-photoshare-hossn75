@@ -1,10 +1,48 @@
 {% extends 'base.html' %}
-
-{% block title %}Login{% endblock %}
-
+{% load crispy_forms_tags %}
+{% block title %}Post Details{% endblock %}
 {% block body %}
 <div class='container col-md-4 offset-md-4'>
-    <h1 class='mb-3 mt-3'>Post</h1>
-
+        <h1 class="mb-3 mt-3">Post</h1>
+        <div class="card mb-5 mx-auto">
+          <a
+            class="mb-1 d-flex align-items-center m-2"
+            href='{% url "profile" username=feed_item.post.user.username %}'
+          >
+            <img
+              class="mr-1 rounded-circle d-inline-block profile-img-sm"
+              src="{{ feed_item.profile.image.url }}"
+            />
+            <p class="m-0 d-inline">{{feed_item.post.user.username}}</p>
+          </a>
+          <img class="card-img-top" src="{{feed_item.post.image.url}}" />
+          <div class="card-body">
+            <p class="card-text mb-2">{{feed_item.post.caption}}</p>
+          </div>
+        </div>
+        <form method="post">
+          {% csrf_token %}
+          {{ form|crispy }}
+          <button class="btn btn-primary mt-3 pl-5 pr-5 pt-2 pb-2" type="submit">
+            Add Comment
+          </button>
+        </form>
+        {% for comment in feed_item.comments %}
+          <div class="card mb-2">
+              <div class="card-body">
+                  <a
+                  class="mb-1 d-flex align-items-center m-2"
+                  ref='{% url "profile" username=comment.comment.user.username %}'
+                >
+                <img
+                  class="mr-1 rounded-circle d-inline-block profile-img-sm"
+                  src="{{ comment.profile.image.url }}"
+                  />
+                  <p class="m-0 d-inline">{{comment.comment.user.username}}</p>
+                  </a>
+              <p>{{ comment.comment.comment }}</p>
+              </div>
+          </div>
+        {% endfor %}
 </div>
 {% endblock %}
