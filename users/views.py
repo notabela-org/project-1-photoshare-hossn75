@@ -11,6 +11,10 @@ from photoshare import utils
 from users.forms import SignUpForm
 
 
+@login_required(login_url='/login/')
+def index(request):
+    return render (request,'')
+
 # Create your views here.
 @utils.anonymous_required
 def sign_up(request):

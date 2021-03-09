@@ -1,3 +1,4 @@
+  
 {% extends 'base.html' %}
 
 {% block title %}{{username}}{% endblock %}
@@ -6,15 +7,15 @@
 <div class='container'>
       <div class ="container mt-5 mx-auto text-center">
           {% if profile is None %}
-            <img class="profile-img rounded-circle mx-auto" src="photoshare/media/default.jpg"/>
+            <img class="profile-img rounded-circle mx-auto" style="max-width: 25%" src="/default.jpg"/>
           {% else %}
-            <img class="profile-img rounded-circle mx-auto" src="{{profile.get_image}}"/>
+            <img class="profile-img rounded-circle mx-auto" style="max-width: 25%" src="{{profile.image.url}}"/>
           {% endif %} 
           <p>{{username}}</p>
           <p>{% if profile is None %}
               Edit profile to update your bio
               {% else %}
-              profile.get_bio
+             {{profile.get_bio}} 
               {% endif %}
           </p>
       {% if request.user.is_authenticated and request.user.get_username == username%}

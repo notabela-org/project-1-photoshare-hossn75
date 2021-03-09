@@ -26,11 +26,11 @@
                         <li class='nav-item'>
                             <a class='nav-link' href='{% url "index" %}'>Home</a>
                         </li>
-                        <li>
-                            <a class='nav-link'href="#"> New Post</a>
+                        <li class='nav-item'>
+                            <a class='nav-link' href='{% url "profile" username=request.user.get_username%}'>My Profile</a>
                         </li>
-                        <li>
-                            <a class='nav-link' href="#"> My Profile</a>
+                        <li class='nav-item'>
+                            <a class='nav-link' href='{% url "new-post" %}'>New Post</a>
                         </li>
                     </ul>
                     <div class='nav-item ml-auto'>
@@ -45,7 +45,7 @@
 
     {% block footer %}
         <footer class='page-footer font-small bg-primary pt-4 mt-5'>
-            <div class='footer-copyright text-center py-3 text-light'>© 2021 Copyright [Your Name ]</div>
+            <div class='footer-copyright text-center py-3 text-light'>© 2021 Copyright [Ayan]</div>
         </footer>
     {% endblock %}
 
