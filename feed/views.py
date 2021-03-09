@@ -4,8 +4,9 @@ from django.contrib.auth.models import User
 from django.db.models import ObjectDoesNotExist
 from django.http import HttpResponseRedirect
 from django.urls import reverse, reverse_lazy
-from users.models import Profile
+from users.models import *
 from .forms import EditProfileForm
+from .forms import NewPostForm 
 
 # Create your views here.
 @login_required
@@ -46,3 +47,18 @@ def editprofile(request):
     except ObjectDoesNotExist:
         form = EditProfileForm(data={'username':request.user.get_username()})
     return render(request, 'feed/editprofile.html',{'form':form})
+
+
+@login_required
+def new_post(request):
+    form = NewPostForm(data={})
+    if request.method == 'POST':
+        form = NewPostForm(data=request.POST,files= request.FILES)
+        if form.is_valid():
+            cleanForm = form.cleaned_data
+            post = Post(user=request.user,image=cleanForm['image'],caption=cleanForm['caption'])
+            post.save()
+
+            return HttpResponseRedirect(reverse('index'))
+        return render(request,'feed/new-post.html',{'form':form})
+    return render(request, 'feed/new-post.html',{'form':form})
