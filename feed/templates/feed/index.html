@@ -1,16 +1,40 @@
-{% extends 'base.html' %}
+ {% extends 'base.html' %}
+ {% block title %}Home{% endblock %} 
+ {% block body %}
+<div class="container mx-auto">
+  {% for post in page_obj %}
+  <div class="card mb-5 mx-auto">
+    <a
+      class="mb-1 d-flex align-items-center m-2"
+      href='{% url "profile" username=post.post.user.username %}'
+    >
+    <img class="mr-1 rounded-circle d-inline-block profile-img-sm" src="{{post.profile.image.url}}"/>
+      <p class="m-0 d-inline">{{post.post.user.username}}</p>
+    </a>
+    <img class="card-img-top" src="{{post.post.image.url}}"/>
+    <div class="card-body">
+      <p class="card-text mb-2">{{post.post.caption}}</p>
+      <a href='{% url "post" id=post.post.id %}'>Comments</a>
+    </div>
+  </div>
+  {% endfor %}
 
-{% block title %}Home{% endblock %}
+  <div class="pagination">
+    <span class="step-links">
+      {% if page_obj.has_previous %}
+      <a href="?page=1">&laquo; first</a>
+      <a href="?page={{ page_obj.previous_page_number }}">previous</a>
+      {% endif %}
+      <span class="current">
+        Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}.
+      </span>
 
-{% block body %}
-<div class='container'>
-    <figure class='text-center mt-5'>
-        <blockquote class='blockquote'>
-          <p>The world is but a canvas to our imagination</p>
-        </blockquote>
-        <figcaption class='blockquote-footer'>
-          Henry David Thoreau
-        </figcaption>
-      </figure>
+      {% if page_obj.has_next %}
+      <a href="?page={{ page_obj.next_page_number }}">next</a>
+      <a href="?page={{ page_obj.paginator.num_pages }}">last &raquo;</a>
+      {% endif %}
+    </span>
+  </div>
 </div>
+
 {% endblock %}

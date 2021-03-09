@@ -4,6 +4,7 @@ from django.contrib.auth.models import User
 from django.db.models import ObjectDoesNotExist
 from django.http import HttpResponseRedirect
 from django.urls import reverse, reverse_lazy
+from django.core.paginator import Paginator
 from users.models import *
 from .forms import EditProfileForm
 from .forms import NewPostForm 
@@ -11,7 +12,25 @@ from .forms import NewPostForm
 # Create your views here.
 @login_required
 def index(request):
-    return render(request, 'feed/index.html')
+    feed = [] 
+    posts = Post.objects.all()
+    for post in posts:
+        feedItem = {}
+        feedItem['post'] = post
+        try:
+            feedItem['profile'] = Profile.objects.get(user=post.user)
+            feedItem['comments'] = Comment.objects.get(post=post)
+        except ObjectDoesNotExist:
+            print("Failed to fetch profile or comments")
+        feed.append(feedItem)
+
+    paginator = Paginator(feed,10)
+
+    page_number = request.GET.get('page')
+    page_obj = paginator.get_page(page_number)
+    return render(request, 'feed/index.html',{'page_obj':page_obj})
+
+    # return render(request, 'feed/index.html')
 
 @login_required
 def profile(request,username):
@@ -62,3 +81,8 @@ def new_post(request):
             return HttpResponseRedirect(reverse('index'))
         return render(request,'feed/new-post.html',{'form':form})
     return render(request, 'feed/new-post.html',{'form':form})
+
+
+@login_required
+def post(request,id):
+    return render(request,'feed/post.html',{'id':id})
