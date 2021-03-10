@@ -10,7 +10,7 @@ The following **required** functionality is completed:
 
 - [X] User can sign up to create a new account
 - [X] User can log in and log out of her account
-- [X] Each user has a profile page that shows her username, profile photo, short bio and all their posts
+- [ ] Each user has a profile page that shows her username, profile photo, short bio and all their posts
 - [X] A Logged in user can edit her profile photo, her username and short bio (only hers but not others)
 - [X] A Logged in User can create a new post by uploading a photo and adding a description
 - [X] A Logged in User can add a comment on a post
